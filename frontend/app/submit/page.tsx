@@ -27,6 +27,7 @@ export default function SubmitPage() {
   const [status, setStatus] = useState<string>("idle");
   const [msg, setMsg] = useState<string>("");
   const [network, setNetwork] = useState<"mock" | "sepolia" | undefined>(undefined);
+  const [hasEthereum, setHasEthereum] = useState(false);
 
   // Form
   const [animal, setAnimal] = useState("");
@@ -41,10 +42,11 @@ export default function SubmitPage() {
   const [abi, setAbi] = useState<any[]>([]);
 
   useEffect(() => {
+    setHasEthereum(typeof window !== "undefined" && !!(window as any).ethereum);
     (async () => {
       const [abiJson, addrJson] = await Promise.all([
-        fetch("/abi/WildSaveRegistryABI.json").then((r) => r.json()).catch(() => ({ abi: [] })),
-        fetch("/abi/WildSaveRegistryAddresses.json").then((r) => r.json()).catch(() => ({})),
+        fetch("abi/WildSaveRegistryABI.json").then((r) => r.json()).catch(() => ({ abi: [] })),
+        fetch("abi/WildSaveRegistryAddresses.json").then((r) => r.json()).catch(() => ({})),
       ]);
 
       setAbi(abiJson.abi ?? []);
@@ -103,7 +105,7 @@ export default function SubmitPage() {
     try {
       if (network === "mock") {
         const { MockFhevmInstance } = await import("@fhevm/mock-utils");
-        const mock = await MockFhevmInstance.create({ rpcUrl: "http://localhost:8545" });
+        const mock = await (MockFhevmInstance as any).create({ rpcUrl: "http://localhost:8545" });
 
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
@@ -164,8 +166,8 @@ export default function SubmitPage() {
         </div>
 
         {!account && (
-          <button onClick={connect} disabled={!window?.ethereum} className="btn-primary w-full mb-6">
-            {window?.ethereum ? "🦊 Connect Wallet" : "⚠️ MetaMask Not Found"}
+          <button onClick={connect} disabled={!hasEthereum} className="btn-primary w-full mb-6">
+            {hasEthereum ? "🦊 Connect Wallet" : "⚠️ MetaMask Not Found"}
           </button>
         )}
 

@@ -14,6 +14,7 @@ export default function MyPage() {
   const [tierClear, setTierClear] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [claimed, setClaimed] = useState<{ b: boolean; i: boolean; e: boolean }>({ b: false, i: false, e: false });
+  const [hasEthereum, setHasEthereum] = useState(false);
 
   const storageKey = (addr: string) => `wildsave:badge:${addr.toLowerCase()}`;
 
@@ -35,10 +36,11 @@ export default function MyPage() {
   };
 
   useEffect(() => {
+    setHasEthereum(typeof window !== "undefined" && !!(window as any).ethereum);
     (async () => {
       const [abiJson, addrJson] = await Promise.all([
-        fetch("/abi/WildSaveRegistryABI.json").then((r) => r.json()).catch(() => ({ abi: [] })),
-        fetch("/abi/WildSaveRegistryAddresses.json").then((r) => r.json()).catch(() => ({})),
+        fetch("abi/WildSaveRegistryABI.json").then((r) => r.json()).catch(() => ({ abi: [] })),
+        fetch("abi/WildSaveRegistryAddresses.json").then((r) => r.json()).catch(() => ({})),
       ]);
       setAbi(abiJson.abi ?? []);
       const isLocal = await detectLocal();
@@ -108,7 +110,7 @@ export default function MyPage() {
         const data = await res.json();
         if (data?.result?.toLowerCase?.().includes("hardhat")) {
           const { MockFhevmInstance } = await import("@fhevm/mock-utils");
-          const mock = await MockFhevmInstance.create({ rpcUrl: "http://localhost:8545" });
+          const mock = await (MockFhevmInstance as any).create({ rpcUrl: "http://localhost:8545" });
           const v = await mock.decryptPublic(contractAddress, handle);
           setCountClear(v?.toString?.() ?? String(v));
           setLoading(false);
@@ -179,8 +181,8 @@ export default function MyPage() {
         </p>
 
         {!account ? (
-          <button onClick={connect} disabled={!window?.ethereum} className="btn-primary w-full">
-            {window?.ethereum ? "🦊 Connect Wallet" : "⚠️ MetaMask Not Found"}
+          <button onClick={connect} disabled={!hasEthereum} className="btn-primary w-full">
+            {hasEthereum ? "🦊 Connect Wallet" : "⚠️ MetaMask Not Found"}
           </button>
         ) : (
           <div className="space-y-4">

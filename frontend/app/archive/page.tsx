@@ -12,8 +12,8 @@ export default function ArchivePage() {
   useEffect(() => {
     (async () => {
       const [abiJson, addrJson] = await Promise.all([
-        fetch("/abi/WildSaveRegistryABI.json").then((r) => r.json()).catch(() => ({ abi: [] })),
-        fetch("/abi/WildSaveRegistryAddresses.json").then((r) => r.json()).catch(() => ({})),
+        fetch("abi/WildSaveRegistryABI.json").then((r) => r.json()).catch(() => ({ abi: [] })),
+        fetch("abi/WildSaveRegistryAddresses.json").then((r) => r.json()).catch(() => ({})),
       ]);
       setAbi(abiJson.abi ?? []);
 
@@ -72,7 +72,7 @@ export default function ArchivePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {items.map((it) => (
-          <a key={it.id} href={`/archive/${it.id}`} className="glass-card p-6 space-y-3 block hover:shadow-lg transition-shadow">
+          <a key={it.id} href={`/archive/?id=${it.id}`} className="glass-card p-6 space-y-3 block hover:shadow-lg transition-shadow">
             <div className="flex items-start justify-between">
               <div className="text-2xl font-bold text-green-900">#{it.id}</div>
               <div className="text-xs bg-green-200 text-green-900 px-3 py-1 rounded-full font-semibold">

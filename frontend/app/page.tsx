@@ -15,8 +15,8 @@ export default function Home() {
   useEffect(() => {
     (async () => {
       const [abiJson, addrJson] = await Promise.all([
-        fetch("/abi/WildSaveRegistryABI.json").then((r) => r.json()).catch(() => ({ abi: [] })),
-        fetch("/abi/WildSaveRegistryAddresses.json").then((r) => r.json()).catch(() => ({})),
+        fetch("abi/WildSaveRegistryABI.json").then((r) => r.json()).catch(() => ({ abi: [] })),
+        fetch("abi/WildSaveRegistryAddresses.json").then((r) => r.json()).catch(() => ({})),
       ]);
       setAbi(abiJson.abi ?? []);
       const isLocal = await detectLocal();
@@ -59,7 +59,7 @@ export default function Home() {
       const data = await res.json();
       if (data?.result?.toLowerCase?.().includes("hardhat")) {
         const { MockFhevmInstance } = await import("@fhevm/mock-utils");
-        const mock = await MockFhevmInstance.create({ rpcUrl: "http://localhost:8545" });
+        const mock = await (MockFhevmInstance as any).create({ rpcUrl: "http://localhost:8545" });
         const v = await mock.decryptPublic(contractAddress, encTotal);
         setClearTotal(v?.toString?.() ?? String(v));
         setLoading(false);
