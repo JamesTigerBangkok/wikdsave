@@ -31,21 +31,21 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: 'action/frontend/package.json'
+          cache-dependency-path: 'action/package-lock.json'
 
-      - name: Install dependencies
-        working-directory: action/frontend
+      - name: Install dependencies (root)
+        working-directory: action
         run: npm ci --no-audit --no-fund
 
       - name: Generate ABI
-        working-directory: action/frontend
-        run: npm run genabi || true
+        working-directory: action
+        run: npm -w frontend run genabi || true
 
       - name: Build static site
-        working-directory: action/frontend
+        working-directory: action
         env:
           NEXT_PUBLIC_BASE_PATH: '/wikdsave'
-        run: npm run build
+        run: npm -w frontend run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
