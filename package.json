@@ -1,0 +1,18 @@
+{
+  "name": "wildsave-action-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "bootstrap": "npm -w backend i && npm -w frontend i",
+    "build": "npm -w backend run compile && npm -w frontend run build",
+    "dev": "npm -w backend run node & npm -w frontend run dev",
+    "deploy:sepolia": "npm -w backend run deploy:sepolia && npm -w frontend run genabi"
+  }
+}
+
+
+
