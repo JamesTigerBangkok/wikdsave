@@ -3,4 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
 };
 
-module.exports = nextConfig;
+
+
+nextConfig.output='export';
+module.exports=nextConfig;
